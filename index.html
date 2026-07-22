@@ -4,12 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Comandas</title>
+
+  <!-- Configurações para instalar como App (PWA) -->
+  <meta name="theme-color" content="#121214">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Comandas">
+
+  <!-- Ícone do Aplicativo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>">
+
+  <!-- Web App Manifest (Embutido) -->
+  <link rel="manifest" href="data:application/manifest+json;utf8,{%22name%22:%22Sistema%20de%20Comandas%22,%22short_name%22:%22Comandas%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23121214%22,%22theme_color%22:%22%23734bd1%22,%22icons%22:[{%22src%22:%22data:image/svg%2Bxml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg%2Bxml%22}]}">
+
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      user-select: none;
     }
 
     body {
@@ -402,7 +418,7 @@
         renderizarComandas(filtradas);
       });
 
-      // Eventos dos Botões
+      // Eventos
       document.getElementById('btnAbrirNovaComanda').onclick = abrirModalNovaComanda;
       document.getElementById('btnCancelarNovaComanda').onclick = () => fecharModal('modalNovaComanda');
       document.getElementById('btnCriarComanda').onclick = criarComanda;
@@ -410,7 +426,6 @@
       document.getElementById('btnFecharComanda').onclick = fecharComanda;
       document.getElementById('btnSairDetalhes').onclick = () => fecharModal('modalDetalhes');
 
-      // Inicialização
       renderizarComandas();
     });
   </script>
