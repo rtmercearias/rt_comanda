@@ -1,583 +1,593 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Comandas</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Comandas</title>
 
-<meta name="theme-color" content="#121214">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#121214">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>">
 
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      user-select: none;
+    }
 
-<style>
-* {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-user-select: none;
-}
+    body {
+      background-color: #121214;
+      color: #e1e1e6;
+      padding-bottom: 80px;
+    }
 
-body {
-background-color: #121214;
-color: #e1e1e6;
-padding-bottom: 80px;
-}
+    .page {
+      display: none;
+    }
 
-.page {
-display: none;
-}
+    .page.active {
+      display: block;
+    }
 
-.page.active {
-display: block;
-}
+    /* Topo Geral */
+    header {
+      background: #1d1b26;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-/* Topo Geral */
-header {
-background: #1d1b26;
-padding: 14px 16px;
-position: sticky;
-top: 0;
-z-index: 10;
-box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-display: flex;
-align-items: center;
-gap: 12px;
-}
+    .search-box {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #323238;
+      background: #202024;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
 
-.search-box {
-width: 100%;
-padding: 10px 14px;
-border-radius: 8px;
-border: 1px solid #323238;
-background: #202024;
-color: #fff;
-font-size: 15px;
-outline: none;
-}
+    .back-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+    }
 
-.back-btn {
-background: none;
-border: none;
-color: #fff;
-font-size: 22px;
-cursor: pointer;
-}
+    .header-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      flex: 1;
+    }
 
-.header-title {
-font-size: 20px;
-font-weight: bold;
-color: #fff;
-flex: 1;
-}
+    /* Lista de Comandas */
+    .grid-comandas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      padding: 16px;
+    }
 
-/* Lista de Comandas */
-.grid-comandas {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-gap: 12px;
-padding: 16px;
-}
+    .card {
+      background: linear-gradient(135deg, #2d2a3e 0%, #1f1b2d 100%);
+      border: 1px solid #3e3859;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 120px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
 
-.card {
-background: linear-gradient(135deg, #2d2a3e 0%, #1f1b2d 100%);
-border: 1px solid #3e3859;
-border-radius: 12px;
-padding: 14px;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-min-height: 120px;
-cursor: pointer;
-box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
 
-.card-title {
-font-size: 18px;
-font-weight: bold;
-color: #fff;
-}
+    .card-time {
+      font-size: 11px;
+      color: #a8a8b3;
+    }
 
-.card-time {
-font-size: 11px;
-color: #a8a8b3;
-}
+    .card-total {
+      font-size: 16px;
+      font-weight: bold;
+      color: #04d361;
+      text-align: right;
+      margin-top: 10px;
+    }
 
-.card-total {
-font-size: 16px;
-font-weight: bold;
-color: #04d361;
-text-align: right;
-margin-top: 10px;
-}
+    /* Tela Interna da Comanda */
+    .comanda-header-info {
+      padding: 16px;
+      background: #181720;
+      border-bottom: 1px solid #292838;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-/* Tela Interna da Comanda */
-.comanda-header-info {
-padding: 16px;
-background: #181720;
-border-bottom: 1px solid #292838;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
+    .total-banner {
+      font-size: 20px;
+      font-weight: bold;
+      color: #04d361;
+    }
 
-.total-banner {
-font-size: 20px;
-font-weight: bold;
-color: #04d361;
-}
+    .lista-produtos-comanda {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-.lista-produtos-comanda {
-padding: 16px;
-display: flex;
-flex-direction: column;
-gap: 12px;
-}
+    .product-card {
+      background: #1f1b2d;
+      border: 1px solid #3e3859;
+      border-radius: 12px;
+      padding: 14px;
+    }
 
-.product-card {
-background: #1f1b2d;
-border: 1px solid #3e3859;
-border-radius: 12px;
-padding: 14px;
-}
+    .product-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
 
-.product-top {
-display: flex;
-justify-content: space-between;
-margin-bottom: 12px;
-}
+    .product-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+    }
 
-.product-title {
-font-size: 16px;
-font-weight: bold;
-color: #fff;
-}
+    .product-price-info {
+      text-align: right;
+      font-size: 14px;
+      color: #a8a8b3;
+    }
 
-.product-price-info {
-text-align: right;
-font-size: 14px;
-color: #a8a8b3;
-}
+    .product-price-total {
+      font-size: 16px;
+      font-weight: bold;
+      color: #734bd1;
+    }
 
-.product-price-total {
-font-size: 16px;
-font-weight: bold;
-color: #734bd1;
-}
+    /* Controles de Quantidade + - */
+    .product-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #292838;
+      padding-top: 10px;
+    }
 
-/* Controles de Quantidade + - */
-.product-controls {
-display: flex;
-align-items: center;
-justify-content: space-between;
-border-top: 1px solid #292838;
-padding-top: 10px;
-}
+    .qty-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-.qty-box {
-display: flex;
-align-items: center;
-gap: 8px;
-}
+    .btn-qty {
+      background: #2d2a3e;
+      border: 1px solid #484368;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
 
-.btn-qty {
-background: #2d2a3e;
-border: 1px solid #484368;
-color: #fff;
-width: 36px;
-height: 36px;
-border-radius: 8px;
-font-size: 18px;
-font-weight: bold;
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-}
+    .btn-qty:active {
+      background: #734bd1;
+    }
 
-.btn-qty:active {
-background: #734bd1;
-}
+    .qty-number {
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0 8px;
+    }
 
-.qty-number {
-font-size: 16px;
-font-weight: bold;
-padding: 0 8px;
-}
+    .btn-delete {
+      background: none;
+      border: none;
+      color: #f75a68;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px;
+    }
 
-.btn-delete {
-background: none;
-border: none;
-color: #f75a68;
-font-size: 18px;
-cursor: pointer;
-padding: 6px;
-}
+    /* Botões Flutuantes */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #734bd1;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      padding: 14px 22px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 6px 15px rgba(115, 75, 209, 0.5);
+      cursor: pointer;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-/* Botões Flutuantes */
-.fab {
-position: fixed;
-bottom: 20px;
-right: 20px;
-background: #734bd1;
-color: #fff;
-border: none;
-border-radius: 30px;
-padding: 14px 22px;
-font-size: 16px;
-font-weight: bold;
-box-shadow: 0 6px 15px rgba(115, 75, 209, 0.5);
-cursor: pointer;
-z-index: 99;
-display: flex;
-align-items: center;
-gap: 8px;
-}
+    /* Modais */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
 
-/* Modais */
-.modal-overlay {
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
-background: rgba(0, 0, 0, 0.85);
-display: none;
-align-items: center;
-justify-content: center;
-z-index: 1000;
-padding: 16px;
-}
+    .modal {
+      background: #202024;
+      border-radius: 12px;
+      padding: 20px;
+      width: 100%;
+      max-width: 420px;
+    }
 
-.modal {
-background: #202024;
-border-radius: 12px;
-padding: 20px;
-width: 100%;
-max-width: 420px;
-}
+    .form-group {
+      margin-bottom: 12px;
+    }
 
-.form-group {
-margin-bottom: 12px;
-}
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #a8a8b3;
+    }
 
-.form-group label {
-display: block;
-font-size: 13px;
-margin-bottom: 4px;
-color: #a8a8b3;
-}
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #323238;
+      background: #121214;
+      color: #fff;
+      font-size: 15px;
+    }
 
-.form-group input, .form-group select {
-width: 100%;
-padding: 12px;
-border-radius: 6px;
-border: 1px solid #323238;
-background: #121214;
-color: #fff;
-font-size: 15px;
-}
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
 
-.btn-group {
-display: flex;
-gap: 10px;
-margin-top: 16px;
-}
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
 
-.btn {
-flex: 1;
-padding: 12px;
-border: none;
-border-radius: 6px;
-font-weight: bold;
-font-size: 15px;
-cursor: pointer;
-}
-
-.btn-primary { background: #734bd1; color: #fff; }
-.btn-secondary { background: #323238; color: #fff; }
-.btn-danger { background: #f75a68; color: #fff; }
-</style>
+    .btn-primary { background: #734bd1; color: #fff; }
+    .btn-secondary { background: #323238; color: #fff; }
+    .btn-danger { background: #f75a68; color: #fff; }
+  </style>
 </head>
 <body>
 
-<!-- PÁGINA 1: LISTA DE COMANDAS -->
-<div id="pageHome" class="page active">
-<header>
-<input type="text" id="searchInput" class="search-box" placeholder="Pesquisar cliente...">
-</header>
+  <!-- PÁGINA 1: LISTA DE COMANDAS -->
+  <div id="pageHome" class="page active">
+    <header>
+      <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar cliente...">
+    </header>
 
-<main class="grid-comandas" id="comandasGrid"></main>
+    <main class="grid-comandas" id="comandasGrid"></main>
 
-<button class="fab" id="btnAbrirNovaComanda">+ Nova Comanda</button>
-</div>
+    <button class="fab" id="btnAbrirNovaComanda">+ Nova Comanda</button>
+  </div>
 
-<!-- PÁGINA 2: DETALHES DA COMANDA / PRODUTOS -->
-<div id="pageComanda" class="page">
-<header>
-<button class="back-btn" id="btnVoltarHome">←</button>
-<div class="header-title" id="clienteTituloHeader">Cliente</div>
-<button class="btn btn-danger" style="padding: 6px 12px; font-size: 13px; flex: none;" id="btnFecharComanda">Pagar / Fechar</button>
-</header>
+  <!-- PÁGINA 2: DETALHES DA COMANDA / PRODUTOS -->
+  <div id="pageComanda" class="page">
+    <header>
+      <button class="back-btn" id="btnVoltarHome">←</button>
+      <div class="header-title" id="clienteTituloHeader">Cliente</div>
+      <button class="btn btn-danger" style="padding: 6px 12px; font-size: 13px; flex: none;" id="btnFecharComanda">Pagar / Fechar</button>
+    </header>
 
-<div class="comanda-header-info">
-<span style="color: #a8a8b3; font-size: 14px;">Consumo total:</span>
-<span class="total-banner" id="detalheTotalGeral">R$` 0,00</span>
-</div>
+    <div class="comanda-header-info">
+      <span style="color: #a8a8b3; font-size: 14px;">Consumo total:</span>
+      <span class="total-banner" id="detalheTotalGeral">R$ 0,00</span>
+    </div>
 
-<div class="lista-produtos-comanda" id="produtosComandaLista"></div>
+    <div class="lista-produtos-comanda" id="produtosComandaLista"></div>
 
-<button class="fab" id="btnAbrirAddProduto">🛒 + Produto</button>
-</div>
+    <button class="fab" id="btnAbrirAddProduto">🛒 + Produto</button>
+  </div>
 
-<!-- MODAL: NOVA COMANDA -->
-<div class="modal-overlay" id="modalNovaComanda">
-<div class="modal">
-<h3 style="margin-bottom: 12px; color: #fff;">Abrir Comanda</h3>
-<div class="form-group">
-<label>Nome do Cliente</label>
-<input type="text" id="novoClienteNome" placeholder="Ex: Marcio, Dimi, Ale...">
-</div>
-<div class="btn-group">
-<button class="btn btn-secondary" id="btnCancelarNovaComanda">Cancelar</button>
-<button class="btn btn-primary" id="btnCriarComanda">Criar</button>
-</div>
-</div>
-</div>
+  <!-- MODAL: NOVA COMANDA -->
+  <div class="modal-overlay" id="modalNovaComanda">
+    <div class="modal">
+      <h3 style="margin-bottom: 12px; color: #fff;">Abrir Comanda</h3>
+      <div class="form-group">
+        <label>Nome do Cliente</label>
+        <input type="text" id="novoClienteNome" placeholder="Ex: Marcio, Dimi, Ale...">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" id="btnCancelarNovaComanda">Cancelar</button>
+        <button class="btn btn-primary" id="btnCriarComanda">Criar</button>
+      </div>
+    </div>
+  </div>
 
-<!-- MODAL: ADICIONAR PRODUTO -->
-<div class="modal-overlay" id="modalAddProduto">
-<div class="modal">
-<h3 style="margin-bottom: 12px; color: #fff;">Adicionar Produto</h3>
+  <!-- MODAL: ADICIONAR PRODUTO -->
+  <div class="modal-overlay" id="modalAddProduto">
+    <div class="modal">
+      <h3 style="margin-bottom: 12px; color: #fff;">Adicionar Produto</h3>
+      
+      <div class="form-group">
+        <label>Produto Cadastrado</label>
+        <select id="selectProduto">
+          <option value="">-- Selecione ou digite avulso --</option>
+          <option value="Original 269ml" data-preco="3.75">Original 269ml - R$ 3,75</option>
+          <option value="Refri Lata" data-preco="5.00">Refri Lata - R$ 5,00</option>
+          <option value="Império 350ml" data-preco="3.50">Império 350ml - R$ 3,50</option>
+          <option value="Heineken 269ml" data-preco="5.00">Heineken 269ml - R$ 5,00</option>
+          <option value="Amstel 269ml" data-preco="3.50">Amstel 269ml - R$ 3,50</option>
+          <option value="Heineken 330ml" data-preco="7.50">Heineken 330ml - R$ 7,50</option>
+        </select>
+      </div>
 
-<div class="form-group">
-<label>Produto Cadastrado</label>
-<select id="selectProduto">
-<option value="">-- Selecione ou digite avulso --</option>
-<option value="Original 269ml" data-preco="3.75">Original 269ml - R$ 3,75&lt;/option&gt; &lt;option value="Refri Lata" data-preco="5.00"&gt;Refri Lata - R$ 5,00</option>
-<option value="Império 350ml" data-preco="3.50">Império 350ml - R$ 3,50&lt;/option&gt; &lt;option value="Heineken 269ml" data-preco="5.00"&gt;Heineken 269ml - R$ 5,00</option>
-<option value="Amstel 269ml" data-preco="3.50">Amstel 269ml - R$ 3,50&lt;/option&gt; &lt;option value="Heineken 330ml" datta-preco="7.50"&gt;Heineken 330ml - R$ 7,50</option>
-</select>
-</div>
+      <div class="form-group">
+        <label>Nome / Descrição Avulsa</label>
+        <input type="text" id="itemNome" placeholder="Ex: Preço Avulso ou Lanche">
+      </div>
 
-<div class="form-group">
-<label>Nome / Descrição Avulsa</label>
-<input type="text" id="itemNome" placeholder="Ex: Preço Avulso ou Lanche">
-</div>
+      <div class="form-group">
+        <label>Valor Unitário (R$)</label>
+        <input type="number" step="0.01" id="itemValor" placeholder="0.00">
+      </div>
 
-<div class="form-group">
-<label>Valor Unitário (R$`)</label>
-<input type="number" step="0.01" id="itemValor" placeholder="0.00">
-</div>
+      <div class="form-group">
+        <label>Quantidade Inicial</label>
+        <input type="number" id="itemQtd" value="1" min="1">
+      </div>
 
-<div class="form-group">
-<label>Quantidade Inicial</label>
-<input type="number" id="itemQtd" value="1" min="1">
-</div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" id="btnCancelarAddProduto">Cancelar</button>
+        <button class="btn btn-primary" id="btnConfirmarAddProduto">Adicionar</button>
+      </div>
+    </div>
+  </div>
 
-<div class="btn-group">
-<button class="btn btn-secondary" id="btnCancelarAddProduto">Cancelar</button>
-<button class="btn btn-primary" id="btnConfirmarAddProduto">Adicionar</button>
-</div>
-</div>
-</div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let comandas = JSON.parse(localStorage.getItem('comandas_rt')) || [];
+      let comandaAtualId = null;
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-// Carrega do LocalStorage ou inicia com lista vazia
-let comandas = JSON.parse(localStorage.getItem('comandas_rt')) || [];
-let comandaAtualId = null;
+      function salvarDados() {
+        localStorage.setItem('comandas_rt', JSON.stringify(comandas));
+      }
 
-// Salva os dados permanentemente no navegador
-function salvarDados() {
-localStorage.setItem('comandas_rt', JSON.stringify(comandas));
-}
+      function navegarPara(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+      }
 
-function navegarPara(pageId) {
-document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-document.getElementById(pageId).classList.add('active');
-}
+      function renderizarComandas(lista = comandas) {
+        const grid = document.getElementById('comandasGrid');
+        grid.innerHTML = '';
 
-function renderizarComandas(lista = comandas) {
-const grid = document.getElementById('comandasGrid');
-grid.innerHTML = '';
+        if (lista.length === 0) {
+          grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a8a8b3; padding: 40px 0;">Nenhuma comanda aberta. Clique no botão abaixo para adicionar.</div>';
+          return;
+        }
 
-if (lista.length === 0) {
-grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a8a8b3; padding: 40px 0;">Nenhuma comanda aberta. Clique no botão abaixo para adicionar.</div>';
-return;
-}
+        lista.forEach(c => {
+          const total = c.itens.reduce((acc, curr) => acc + (curr.valorUnit * curr.qtd), 0);
+          const consumoTexto = c.itens.length > 0 ? `R$ ${total.toFixed(2)}` : 'Sem consumo';
 
-lista.forEach(c => {
-const total = c.itens.reduce((acc, curr) => acc + (curr.valorUnit * curr.qtd), 0);
-const consumoTexto = c.itens.length > 0 ? R$ ${total.toFixed(2)} : 'Sem consumo';
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.onclick = () => abrirPaginaComanda(c.id);
+          card.innerHTML = `
+            <div>
+              <div class="card-title">${c.cliente}</div>
+              <div class="card-time">Aberta às ${c.hora}</div>
+            </div>
+            <div class="card-total">${consumoTexto}</div>
+          `;
+          grid.appendChild(card);
+        });
+      }
 
-const card = document.createElement('div');
-card.className = 'card';
-card.onclick = () => abrirPaginaComanda(c.id);
-card.innerHTML = &lt;div&gt; &lt;div class="card-title"&gt;${c.cliente}</div>
-<div class="card-time">Aberta às {consumoTexto}</div>
-`;
-grid.appendChild(card);
-});
-}
+      function abrirPaginaComanda(idComanda) {
+        comandaAtualId = idComanda;
+        const c = comandas.find(item => item.id === idComanda);
+        if (!c) return;
 
-function abrirPaginaComanda(idComanda) {
-comandaAtualId = idComanda;
-const c = comandas.find(item => item.id === idComanda);
-if (!c) return;
+        document.getElementById('clienteTituloHeader').innerText = c.cliente;
+        renderizarProdutosDaComanda(c);
+        navegarPara('pageComanda');
+      }
 
-document.getElementById('clienteTituloHeader').innerText = c.cliente;
-renderizarProdutosDaComanda(c);
-navegarPara('pageComanda');
-}
+      function renderizarProdutosDaComanda(comanda) {
+        const container = document.getElementById('produtosComandaLista');
+        container.innerHTML = '';
+        let totalGeral = 0;
 
-function renderizarProdutosDaComanda(comanda) {
-const container = document.getElementById('produtosComandaLista');
-container.innerHTML = '';
-let totalGeral = 0;
+        if (comanda.itens.length === 0) {
+          container.innerHTML = '<div style="color: #a8a8b3; text-align: center; padding: 30px;">Nenhum produto consumido até o momento.</div>';
+        } else {
+          comanda.itens.forEach((item, index) => {
+            const totalItem = item.valorUnit * item.qtd;
+            totalGeral += totalItem;
 
-if (comanda.itens.length === 0) {
-container.innerHTML = '<div style="color: #a8a8b3; text-align: center; padding: 30px;">Nenhum produto consumido até o momento.</div>';
-} else {
-comanda.itens.forEach((item, index) => {
-const totalItem = item.valorUnit * item.qtd;
-totalGeral += totalItem;
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.innerHTML = `
+              <div class="product-top">
+                <div>
+                  <div class="product-title">${item.desc}</div>
+                  <div class="product-price-info">Unitário: R$ ${item.valorUnit.toFixed(2)}</div>
+                </div>
+                <div style="text-align: right;">
+                  <div class="product-price-total">R$ ${totalItem.toFixed(2)}</div>
+                </div>
+              </div>
+              <div class="product-controls">
+                <div class="qty-box">
+                  <button class="btn-qty" onclick="alterarQtd(${index}, -1)">-</button>
+                  <span class="qty-number">${item.qtd}x</span>
+                  <button class="btn-qty" onclick="alterarQtd(${index}, 1)">+</button>
+                </div>
+                <button class="btn-delete" onclick="removerItem(${index})">🗑️ Excluir</button>
+              </div>
+            `;
+            container.appendChild(productCard);
+          });
+        }
 
-const productCard = document.createElement('div');
-productCard.className = 'product-card';
-productCard.innerHTML = &lt;div class="product-top"&gt; &lt;div&gt; &lt;div class="product-title"&gt;${item.desc}</div>
-<div class="product-price-info">Unitário: R$ ${item.valorUnit.toFixed(2)}</div>
-</div>
-<div style="text-align: right;">
-<div class="product-price-total">R$ ${totalItem.toFixed(2)}</div>
-</div>
-</div>
-<div class="product-controls">
-<div class="qty-box">
-<button class="btn-qty" onclick="alterarQtd(${index}, -1)"&gt;-&lt;/button&gt; &lt;span class="qty-number"&gt;${item.qtd}x</span>
-<button class="btn-qty" onclick="alterarQtd(${index}, 1)"&gt;+&lt;/button&gt; &lt;/div&gt; &lt;button class="btn-delete" onclick="removerItem(${index})">🗑️ Excluir</button>
-</div>
-`;
-container.appendChild(productCard);
-});
-}
+        document.getElementById('detalheTotalGeral').innerText = `R$ ${totalGeral.toFixed(2)}`;
+      }
 
-document.getElementById('detalheTotalGeral').innerText = R$ ${totalGeral.toFixed(2)};
-}
+      window.alterarQtd = function(indexItem, delta) {
+        const comanda = comandas.find(c => c.id === comandaAtualId);
+        if (comanda && comanda.itens[indexItem]) {
+          comanda.itens[indexItem].qtd += delta;
+          if (comanda.itens[indexItem].qtd <= 0) {
+            comanda.itens.splice(indexItem, 1);
+          }
+          salvarDados();
+          renderizarProdutosDaComanda(comanda);
+          renderizarComandas();
+        }
+      };
 
-window.alterarQtd = function(indexItem, delta) {
-const comanda = comandas.find(c => c.id === comandaAtualId);
-if (comanda && comanda.itens[indexItem]) {
-comanda.itens[indexItem].qtd += delta;
-if (comanda.itens[indexItem].qtd <= 0) {
-comanda.itens.splice(indexItem, 1);
-}
-salvarDados();
-renderizarProdutosDaComanda(comanda);
-renderizarComandas();
-}
-};
+      window.removerItem = function(indexItem) {
+        const comanda = comandas.find(c => c.id === comandaAtualId);
+        if (comanda) {
+          comanda.itens.splice(indexItem, 1);
+          salvarDados();
+          renderizarProdutosDaComanda(comanda);
+          renderizarComandas();
+        }
+      };
 
-window.removerItem = function(indexItem) {
-const comanda = comandas.find(c => c.id === comandaAtualId);
-if (comanda) {
-comanda.itens.splice(indexItem, 1);
-salvarDados();
-renderizarProdutosDaComanda(comanda);
-renderizarComandas();
-}
-};
+      function adicionarProduto() {
+        const nome = document.getElementById('itemNome').value.trim();
+        const valor = parseFloat(document.getElementById('itemValor').value);
+        const qtd = parseInt(document.getElementById('itemQtd').value) || 1;
 
-function adicionarProduto() {
-const nome = document.getElementById('itemNome').value.trim();
-const valor = parseFloat(document.getElementById('itemValor').value);
-const qtd = parseInt(document.getElementById('itemQtd').value) || 1;
+        if (!nome || isNaN(valor) || valor <= 0) {
+          return alert('Informe o nome e um preço válido!');
+        }
 
-if (!nome || isNaN(valor) || valor <= 0) {
-return alert('Informe o nome e um preço válido!');
-}
+        const comanda = comandas.find(c => c.id === comandaAtualId);
+        if (comanda) {
+          comanda.itens.push({ desc: nome, valorUnit: valor, qtd: qtd });
+          salvarDados();
+          renderizarProdutosDaComanda(comanda);
+          renderizarComandas();
+          fecharModal('modalAddProduto');
+        }
+      }
 
-const comanda = comandas.find(c => c.id === comandaAtualId);
-if (comanda) {
-comanda.itens.push({ desc: nome, valorUnit: valor, qtd: qtd });
-salvarDados();
-renderizarProdutosDaComanda(comanda);
-renderizarComandas();
-fecharModal('modalAddProduto');
-}
-}
+      function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+      function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
 
-function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
-function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+      document.getElementById('selectProduto').addEventListener('change', function() {
+        const option = this.options[this.selectedIndex];
+        if (option.value) {
+          document.getElementById('itemNome').value = option.value;
+          document.getElementById('itemValor').value = option.getAttribute('data-preco');
+        }
+      });
 
-document.getElementById('selectProduto').addEventListener('change', function() {
-const option = this.options[this.selectedIndex];
-if (option.value) {
-document.getElementById('itemNome').value = option.value;
-document.getElementById('itemValor').value = option.getAttribute('data-preco');
-}
-});
+      document.getElementById('btnVoltarHome').onclick = () => navegarPara('pageHome');
+      
+      document.getElementById('btnAbrirNovaComanda').onclick = () => {
+        document.getElementById('novoClienteNome').value = '';
+        abrirModal('modalNovaComanda');
+      };
+      
+      document.getElementById('btnCancelarNovaComanda').onclick = () => fecharModal('modalNovaComanda');
+      
+      document.getElementById('btnCriarComanda').onclick = () => {
+        const nome = document.getElementById('novoClienteNome').value.trim();
+        if (!nome) return alert('Digite o nome do cliente!');
 
-document.getElementById('btnVoltarHome').onclick = () => navegarPara('pageHome');
+        const agora = new Date();
+        const horaStr = `${String(agora.getHours()).padStart(2, '0')}:${String(agora.getMinutes()).padStart(2, '0')}`;
 
-document.getElementById('btnAbrirNovaComanda').onclick = () => {
-document.getElementById('novoClienteNome').value = '';
-abrirModal('modalNovaComanda');
-};
+        const novaComanda = {
+          id: Date.now(),
+          cliente: nome.toUpperCase(),
+          hora: horaStr,
+          itens: []
+        };
 
-document.getElementById('btnCancelarNovaComanda').onclick = () => fecharModal('modalNovaComanda');
+        comandas.unshift(novaComanda);
+        salvarDados();
+        renderizarComandas();
+        fecharModal('modalNovaComanda');
+        abrirPaginaComanda(novaComanda.id);
+      };
 
-document.getElementById('btnCriarComanda').onclick = () => {
-const nome = document.getElementById('novoClienteNome').value.trim();
-if (!nome) return alert('Digite o nome do cliente!');
+      document.getElementById('btnAbrirAddProduto').onclick = () => {
+        document.getElementById('selectProduto').value = '';
+        document.getElementById('itemNome').value = '';
+        document.getElementById('itemValor').value = '';
+        document.getElementById('itemQtd').value = 1;
+        abrirModal('modalAddProduto');
+      };
 
-const agora = new Date();
-const horaStr = ``${String(agora.getHours()).padStart(2, '0')}:${String(agora.getMinutes()).padStart(2, '0')}`;
+      document.getElementById('btnCancelarAddProduto').onclick = () => fecharModal('modalAddProduto');
+      document.getElementById('btnConfirmarAddProduto').onclick = adicionarProduto;
 
-const novaComanda = {
-id: Date.now(),
-cliente: nome.toUpperCase(),
-hora: horaStr,
-itens: []
-};
+      document.getElementById('btnFecharComanda').onclick = () => {
+        if (confirm('Deseja fechar esta comanda e finalizar o atendimento?')) {
+          comandas = comandas.filter(c => c.id !== comandaAtualId);
+          salvarDados();
+          renderizarComandas();
+          navegarPara('pageHome');
+        }
+      };
 
-comandas.unshift(novaComanda);
-salvarDados();
-renderizarComandas();
-fecharModal('modalNovaComanda');
-abrirPaginaComanda(novaComanda.id);
-};
+      document.getElementById('searchInput').addEventListener('input', function() {
+        const busca = this.value.toLowerCase();
+        const filtradas = comandas.filter(c => c.cliente.toLowerCase().includes(busca));
+        renderizarComandas(filtradas);
+      });
 
-document.getElementById('btnAbrirAddProduto').onclick = () => {
-document.getElementById('selectProduto').value = '';
-document.getElementById('itemNome').value = '';
-document.getElementById('itemValor').value = '';
-document.getElementById('itemQtd').value = 1;
-abrirModal('modalAddProduto');
-};
-
-document.getElementById('btnCancelarAddProduto').onclick = () => fecharModal('modalAddProduto');
-document.getElementById('btnConfirmarAddProduto').onclick = adicionarProduto;
-
-document.getElementById('btnFecharComanda').onclick = () => {
-if (confirm('Deseja fechar esta comanda e finalizar o atendimento?')) {
-comandas = comandas.filter(c => c.id !== comandaAtualId);
-salvarDados();
-renderizarComandas();
-navegarPara('pageHome');
-}
-};
-
-document.getElementById('searchInput').addEventListener('input', function() {
-const busca = this.value.toLowerCase();
-const filtradas = comandas.filter(c => c.cliente.toLowerCase().includes(busca));
-renderizarComandas(filtradas);
-});
-
-// Inicialização
-renderizarComandas();
-});
-</script>
+      renderizarComandas();
+    });
+  </script>
 </body>
 </html>
