@@ -5,19 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Comandas</title>
 
-  <!-- Configurações para instalar como App (PWA) -->
   <meta name="theme-color" content="#121214">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Comandas">
-
-  <!-- Ícone do Aplicativo -->
+  
+  <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>">
-
-  <!-- Web App Manifest (Embutido) -->
-  <link rel="manifest" href="data:application/manifest+json;utf8,{%22name%22:%22Sistema%20de%20Comandas%22,%22short_name%22:%22Comandas%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23121214%22,%22theme_color%22:%22%23734bd1%22,%22icons%22:[{%22src%22:%22data:image/svg%2Bxml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23734bd1'/><text x='50%' y='65%' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>📋</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg%2Bxml%22}]}">
 
   <style>
     * {
@@ -34,19 +28,30 @@
       padding-bottom: 80px;
     }
 
-    /* Topo */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Topo Geral */
     header {
       background: #1d1b26;
-      padding: 16px;
+      padding: 14px 16px;
       position: sticky;
       top: 0;
       z-index: 10;
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .search-box {
       width: 100%;
-      padding: 12px 14px;
+      padding: 10px 14px;
       border-radius: 8px;
       border: 1px solid #323238;
       background: #202024;
@@ -55,7 +60,22 @@
       outline: none;
     }
 
-    /* Cards Grid */
+    .back-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      flex: 1;
+    }
+
+    /* Lista de Comandas */
     .grid-comandas {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -71,15 +91,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 130px;
+      min-height: 120px;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
     }
 
     .card-title {
@@ -93,22 +107,118 @@
       color: #a8a8b3;
     }
 
-    .card-status {
-      font-size: 11px;
-      color: #fba94c;
-      font-weight: 600;
-      margin-top: 4px;
-    }
-
     .card-total {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       color: #04d361;
       text-align: right;
       margin-top: 10px;
     }
 
-    /* Botão Flutuante */
+    /* Tela Interna da Comanda */
+    .comanda-header-info {
+      padding: 16px;
+      background: #181720;
+      border-bottom: 1px solid #292838;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-banner {
+      font-size: 20px;
+      font-weight: bold;
+      color: #04d361;
+    }
+
+    .lista-produtos-comanda {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .product-card {
+      background: #1f1b2d;
+      border: 1px solid #3e3859;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .product-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .product-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .product-price-info {
+      text-align: right;
+      font-size: 14px;
+      color: #a8a8b3;
+    }
+
+    .product-price-total {
+      font-size: 16px;
+      font-weight: bold;
+      color: #734bd1;
+    }
+
+    /* Controles de Quantidade + - */
+    .product-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #292838;
+      padding-top: 10px;
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-qty {
+      background: #2d2a3e;
+      border: 1px solid #484368;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .btn-qty:active {
+      background: #734bd1;
+    }
+
+    .qty-number {
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0 8px;
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      color: #f75a68;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    /* Botões Flutuantes */
     .fab {
       position: fixed;
       bottom: 20px;
@@ -117,12 +227,15 @@
       color: #fff;
       border: none;
       border-radius: 30px;
-      padding: 16px 24px;
+      padding: 14px 22px;
       font-size: 16px;
       font-weight: bold;
       box-shadow: 0 6px 15px rgba(115, 75, 209, 0.5);
       cursor: pointer;
       z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     /* Modais */
@@ -143,13 +256,6 @@
       padding: 20px;
       width: 100%;
       max-width: 420px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal h3 {
-      margin-bottom: 16px;
-      color: #fff;
     }
 
     .form-group {
@@ -192,37 +298,45 @@
     .btn-primary { background: #734bd1; color: #fff; }
     .btn-secondary { background: #323238; color: #fff; }
     .btn-danger { background: #f75a68; color: #fff; }
-
-    /* Lista de Itens */
-    .item-list {
-      margin: 12px 0;
-      border-top: 1px solid #323238;
-      padding-top: 10px;
-    }
-
-    .item-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid #29292e;
-    }
   </style>
 </head>
 <body>
 
-  <header>
-    <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar por nome do cliente...">
-  </header>
+  <!-- PÁGINA 1: LISTA DE COMANDAS -->
+  <div id="pageHome" class="page active">
+    <header>
+      <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar cliente...">
+    </header>
 
-  <main class="grid-comandas" id="comandasGrid"></main>
+    <main class="grid-comandas" id="comandasGrid"></main>
 
-  <button class="fab" id="btnAbrirNovaComanda">+ Nova Comanda</button>
+    <button class="fab" id="btnAbrirNovaComanda">+ Nova Comanda</button>
+  </div>
 
-  <!-- Modal Nova Comanda -->
+  <!-- PÁGINA 2: DETALHES DA COMANDA / PRODUTOS -->
+  <div id="pageComanda" class="page">
+    <header>
+      <button class="back-btn" id="btnVoltarHome">←</button>
+      <div class="header-title" id="clienteTituloHeader">Cliente</div>
+      <button class="btn btn-danger" style="padding: 6px 12px; font-size: 13px; flex: none;" id="btnFecharComanda">Pagar / Fechar</button>
+    </header>
+
+    <div class="comanda-header-info">
+      <span style="color: #a8a8b3; font-size: 14px;" id="comandaStatusTexto">Consumo total:</span>
+      <span class="total-banner" id="detalheTotalGeral">R$ 0,00</span>
+    </div>
+
+    <div class="lista-produtos-comanda" id="produtosComandaLista">
+      <!-- Lista dos itens do cliente -->
+    </div>
+
+    <button class="fab" id="btnAbrirAddProduto">🛒 + Produto</button>
+  </div>
+
+  <!-- MODAL: NOVA COMANDA -->
   <div class="modal-overlay" id="modalNovaComanda">
     <div class="modal">
-      <h3>Abrir Comanda</h3>
+      <h3 style="margin-bottom: 12px; color: #fff;">Abrir Comanda</h3>
       <div class="form-group">
         <label>Nome do Cliente</label>
         <input type="text" id="novoClienteNome" placeholder="Ex: Marcio, Dimi, Ale...">
@@ -234,46 +348,41 @@
     </div>
   </div>
 
-  <!-- Modal Detalhes / Consumo -->
-  <div class="modal-overlay" id="modalDetalhes">
+  <!-- MODAL: ADICIONAR PRODUTO -->
+  <div class="modal-overlay" id="modalAddProduto">
     <div class="modal">
-      <h3 id="detalheClienteTitulo">Comanda</h3>
+      <h3 style="margin-bottom: 12px; color: #fff;">Adicionar Produto</h3>
       
-      <div class="item-list" id="detalheItensLista"></div>
-
-      <div style="font-size: 18px; font-weight: bold; text-align: right; margin-bottom: 16px; color: #04d361;" id="detalheTotal">
-        Total: R$ 0,00
-      </div>
-
-      <hr style="border-color: #323238; margin-bottom: 16px;">
-
-      <h4 style="margin-bottom: 8px;">Adicionar Item</h4>
       <div class="form-group">
         <label>Produto Cadastrado</label>
         <select id="selectProduto">
           <option value="">-- Selecione ou digite avulso --</option>
           <option value="Coca-Cola 2L" data-preco="12.00">Coca-Cola 2L - R$ 12,00</option>
           <option value="Cerveja Lata" data-preco="5.00">Cerveja Lata - R$ 5,00</option>
+          <option value="Império 350ml" data-preco="3.50">Império 350ml - R$ 3,50</option>
           <option value="Salgado" data-preco="7.00">Salgado - R$ 7,00</option>
           <option value="Café Expresso" data-preco="3.50">Café Expresso - R$ 3,50</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>Nome do Item / Descrição</label>
-        <input type="text" id="itemNome" placeholder="Ex: Preço Avulso ou Cerveja">
+        <label>Nome / Descrição Avulsa</label>
+        <input type="text" id="itemNome" placeholder="Ex: Preço Avulso ou Lanche">
       </div>
 
       <div class="form-group">
-        <label>Valor (R$)</label>
+        <label>Valor Unitário (R$)</label>
         <input type="number" step="0.01" id="itemValor" placeholder="0.00">
       </div>
 
-      <button class="btn btn-secondary" style="width: 100%; margin-bottom: 12px;" id="btnInserirConsumo">+ Inserir na Comanda</button>
+      <div class="form-group">
+        <label>Quantidade Inicial</label>
+        <input type="number" id="itemQtd" value="1" min="1">
+      </div>
 
       <div class="btn-group">
-        <button class="btn btn-danger" id="btnFecharComanda">Fechar / Pagar</button>
-        <button class="btn btn-secondary" id="btnSairDetalhes">Sair</button>
+        <button class="btn btn-secondary" id="btnCancelarAddProduto">Cancelar</button>
+        <button class="btn btn-primary" id="btnConfirmarAddProduto">Adicionar</button>
       </div>
     </div>
   </div>
@@ -281,31 +390,50 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       let comandas = [
-        { id: 1, cliente: "DIMI", hora: "17:32", itens: [{ desc: "Salgado", valor: 7.00 }] },
-        { id: 2, cliente: "ALE", hora: "17:34", itens: [{ desc: "Café Expresso", valor: 3.50 }] },
+        { 
+          id: 1, 
+          cliente: "DIMI", 
+          hora: "17:32", 
+          itens: [
+            { desc: "Império 350ml", valorUnit: 3.50, qtd: 3 },
+            { desc: "Salgado", valorUnit: 7.00, qtd: 1 }
+          ] 
+        },
+        { 
+          id: 2, 
+          cliente: "ALE", 
+          hora: "17:34", 
+          itens: [
+            { desc: "Café Expresso", valorUnit: 3.50, qtd: 1 }
+          ] 
+        },
         { id: 3, cliente: "MARCIO", hora: "17:51", itens: [] }
       ];
 
       let comandaAtualId = null;
 
+      // Navegação entre páginas
+      function navegarPara(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+      }
+
+      // Renderiza os cards de comandas da home
       function renderizarComandas(lista = comandas) {
         const grid = document.getElementById('comandasGrid');
         grid.innerHTML = '';
 
         lista.forEach(c => {
-          const total = c.itens.reduce((acc, curr) => acc + curr.valor, 0);
+          const total = c.itens.reduce((acc, curr) => acc + (curr.valorUnit * curr.qtd), 0);
           const consumoTexto = c.itens.length > 0 ? `R$ ${total.toFixed(2)}` : 'Sem consumo';
 
           const card = document.createElement('div');
           card.className = 'card';
-          card.onclick = () => abrirDetalhesComanda(c.id);
+          card.onclick = () => abrirPaginaComanda(c.id);
           card.innerHTML = `
             <div>
-              <div class="card-header">
-                <span class="card-title">${c.cliente}</span>
-                <span class="card-time">${c.hora}</span>
-              </div>
-              <div class="card-status">PENDENTE</div>
+              <div class="card-title">${c.cliente}</div>
+              <div class="card-time">Aberta às ${c.hora}</div>
             </div>
             <div class="card-total">${consumoTexto}</div>
           `;
@@ -313,16 +441,124 @@
         });
       }
 
-      function abrirModalNovaComanda() {
+      // Abre a tela detalhada do cliente
+      function abrirPaginaComanda(idComanda) {
+        comandaAtualId = idComanda;
+        const c = comandas.find(item => item.id === idComanda);
+        if (!c) return;
+
+        document.getElementById('clienteTituloHeader').innerText = c.cliente;
+        renderizarProdutosDaComanda(c);
+        navegarPara('pageComanda');
+      }
+
+      // Renderiza a lista de produtos com + e -
+      function renderizarProdutosDaComanda(comanda) {
+        const container = document.getElementById('produtosComandaLista');
+        container.innerHTML = '';
+        let totalGeral = 0;
+
+        if (comanda.itens.length === 0) {
+          container.innerHTML = '<div style="color: #a8a8b3; text-align: center; padding: 30px;">Nenhum produto consumido até o momento.</div>';
+        } else {
+          comanda.itens.forEach((item, index) => {
+            const totalItem = item.valorUnit * item.qtd;
+            totalGeral += totalItem;
+
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.innerHTML = `
+              <div class="product-top">
+                <div>
+                  <div class="product-title">${item.desc}</div>
+                  <div class="product-price-info">Unitário: R$ ${item.valorUnit.toFixed(2)}</div>
+                </div>
+                <div style="text-align: right;">
+                  <div class="product-price-total">R$ ${totalItem.toFixed(2)}</div>
+                </div>
+              </div>
+              <div class="product-controls">
+                <div class="qty-box">
+                  <button class="btn-qty" onclick="alterarQtd(${index}, -1)">-</button>
+                  <span class="qty-number">${item.qtd}x</span>
+                  <button class="btn-qty" onclick="alterarQtd(${index}, 1)">+</button>
+                </div>
+                <button class="btn-delete" onclick="removerItem(${index})">🗑️ Excluir</button>
+              </div>
+            `;
+            container.appendChild(productCard);
+          });
+        }
+
+        document.getElementById('detalheTotalGeral').innerText = `R$ ${totalGeral.toFixed(2)}`;
+      }
+
+      // Altera quantidade (+ / -)
+      window.alterarQtd = function(indexItem, delta) {
+        const comanda = comandas.find(c => c.id === comandaAtualId);
+        if (comanda && comanda.itens[indexItem]) {
+          comanda.itens[indexItem].qtd += delta;
+          if (comanda.itens[indexItem].qtd <= 0) {
+            comanda.itens.splice(indexItem, 1);
+          }
+          renderizarProdutosDaComanda(comanda);
+          renderizarComandas();
+        }
+      };
+
+      // Remover item individual
+      window.removerItem = function(indexItem) {
+        const comanda = comandas.find(c => c.id === comandaAtualId);
+        if (comanda) {
+          comanda.itens.splice(indexItem, 1);
+          renderizarProdutosDaComanda(comanda);
+          renderizarComandas();
+        }
+      };
+
+      // Inserir novo produto
+      function adicionarProduto() {
+        const nome = document.getElementById('itemNome').value.trim();
+        const valor = parseFloat(document.getElementById('itemValor').value);
+        const qtd = parseInt(document.getElementById('itemQtd').value) || 1;
+
+        if (!nome || isNaN(valor) || valor <= 0) {
+          return alert('Informe o nome e um preço válido!');
+        }
+
+        const comanda = comandas.find(c => c.id === comandaAtualId);
+        if (comanda) {
+          comanda.itens.push({ desc: nome, valorUnit: valor, qtd: qtd });
+          renderizarProdutosDaComanda(comanda);
+          renderizarComandas();
+          fecharModal('modalAddProduto');
+        }
+      }
+
+      // Modais Helpers
+      function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+      function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+
+      // Eventos de Select
+      document.getElementById('selectProduto').addEventListener('change', function() {
+        const option = this.options[this.selectedIndex];
+        if (option.value) {
+          document.getElementById('itemNome').value = option.value;
+          document.getElementById('itemValor').value = option.getAttribute('data-preco');
+        }
+      });
+
+      // Eventos dos Botões
+      document.getElementById('btnVoltarHome').onclick = () => navegarPara('pageHome');
+      
+      document.getElementById('btnAbrirNovaComanda').onclick = () => {
         document.getElementById('novoClienteNome').value = '';
-        document.getElementById('modalNovaComanda').style.display = 'flex';
-      }
-
-      function fecharModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-      }
-
-      function criarComanda() {
+        abrirModal('modalNovaComanda');
+      };
+      
+      document.getElementById('btnCancelarNovaComanda').onclick = () => fecharModal('modalNovaComanda');
+      
+      document.getElementById('btnCriarComanda').onclick = () => {
         const nome = document.getElementById('novoClienteNome').value.trim();
         if (!nome) return alert('Digite o nome do cliente!');
 
@@ -339,78 +575,27 @@
         comandas.unshift(novaComanda);
         renderizarComandas();
         fecharModal('modalNovaComanda');
-      }
+        abrirPaginaComanda(novaComanda.id);
+      };
 
-      function abrirDetalhesComanda(comandaId) {
-        comandaAtualId = comandaId;
-        const c = comandas.find(item => item.id === comandaId);
-        if (!c) return;
-
-        document.getElementById('detalheClienteTitulo').innerText = `Comanda: ${c.cliente}`;
-        renderizarItensDetalhe(c);
-        
+      document.getElementById('btnAbrirAddProduto').onclick = () => {
         document.getElementById('selectProduto').value = '';
         document.getElementById('itemNome').value = '';
         document.getElementById('itemValor').value = '';
+        document.getElementById('itemQtd').value = 1;
+        abrirModal('modalAddProduto');
+      };
 
-        document.getElementById('modalDetalhes').style.display = 'flex';
-      }
+      document.getElementById('btnCancelarAddProduto').onclick = () => fecharModal('modalAddProduto');
+      document.getElementById('btnConfirmarAddProduto').onclick = adicionarProduto;
 
-      function renderizarItensDetalhe(comanda) {
-        const listaContainer = document.getElementById('detalheItensLista');
-        listaContainer.innerHTML = '';
-        let total = 0;
-
-        if (comanda.itens.length === 0) {
-          listaContainer.innerHTML = '<div style="color: #a8a8b3; font-size: 13px; text-align: center; padding: 8px;">Nenhum item adicionado.</div>';
-        } else {
-          comanda.itens.forEach(item => {
-            total += item.valor;
-            const row = document.createElement('div');
-            row.className = 'item-row';
-            row.innerHTML = `<span>${item.desc}</span> <strong>R$ ${item.valor.toFixed(2)}</strong>`;
-            listaContainer.appendChild(row);
-          });
-        }
-
-        document.getElementById('detalheTotal').innerText = `Total: R$ ${total.toFixed(2)}`;
-      }
-
-      document.getElementById('selectProduto').addEventListener('change', function() {
-        const option = this.options[this.selectedIndex];
-        if (option.value) {
-          document.getElementById('itemNome').value = option.value;
-          document.getElementById('itemValor').value = option.getAttribute('data-preco');
-        }
-      });
-
-      function adicionarConsumo() {
-        const nomeItem = document.getElementById('itemNome').value.trim();
-        const valorItem = parseFloat(document.getElementById('itemValor').value);
-
-        if (!nomeItem || isNaN(valorItem) || valorItem <= 0) {
-          return alert('Informe a descrição e um valor válido!');
-        }
-
-        const comanda = comandas.find(c => c.id === comandaAtualId);
-        if (comanda) {
-          comanda.itens.push({ desc: nomeItem, valor: valorItem });
-          renderizarItensDetalhe(comanda);
-          renderizarComandas();
-
-          document.getElementById('selectProduto').value = '';
-          document.getElementById('itemNome').value = '';
-          document.getElementById('itemValor').value = '';
-        }
-      }
-
-      function fecharComanda() {
+      document.getElementById('btnFecharComanda').onclick = () => {
         if (confirm('Deseja fechar esta comanda e finalizar o atendimento?')) {
           comandas = comandas.filter(c => c.id !== comandaAtualId);
           renderizarComandas();
-          fecharModal('modalDetalhes');
+          navegarPara('pageHome');
         }
-      }
+      };
 
       document.getElementById('searchInput').addEventListener('input', function() {
         const busca = this.value.toLowerCase();
@@ -418,14 +603,7 @@
         renderizarComandas(filtradas);
       });
 
-      // Eventos
-      document.getElementById('btnAbrirNovaComanda').onclick = abrirModalNovaComanda;
-      document.getElementById('btnCancelarNovaComanda').onclick = () => fecharModal('modalNovaComanda');
-      document.getElementById('btnCriarComanda').onclick = criarComanda;
-      document.getElementById('btnInserirConsumo').onclick = adicionarConsumo;
-      document.getElementById('btnFecharComanda').onclick = fecharComanda;
-      document.getElementById('btnSairDetalhes').onclick = () => fecharModal('modalDetalhes');
-
+      // Inicializar
       renderizarComandas();
     });
   </script>
