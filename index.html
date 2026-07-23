@@ -322,13 +322,11 @@
     </header>
 
     <div class="comanda-header-info">
-      <span style="color: #a8a8b3; font-size: 14px;" id="comandaStatusTexto">Consumo total:</span>
+      <span style="color: #a8a8b3; font-size: 14px;">Consumo total:</span>
       <span class="total-banner" id="detalheTotalGeral">R$ 0,00</span>
     </div>
 
-    <div class="lista-produtos-comanda" id="produtosComandaLista">
-      <!-- Lista dos itens do cliente -->
-    </div>
+    <div class="lista-produtos-comanda" id="produtosComandaLista"></div>
 
     <button class="fab" id="btnAbrirAddProduto">🛒 + Produto</button>
   </div>
@@ -389,39 +387,28 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      let comandas = [
-        { 
-          id: 1, 
-          cliente: "DIMI", 
-          hora: "17:32", 
-          itens: [
-            { desc: "Império 350ml", valorUnit: 3.50, qtd: 3 },
-            { desc: "Salgado", valorUnit: 7.00, qtd: 1 }
-          ] 
-        },
-        { 
-          id: 2, 
-          cliente: "ALE", 
-          hora: "17:34", 
-          itens: [
-            { desc: "Café Expresso", valorUnit: 3.50, qtd: 1 }
-          ] 
-        },
-        { id: 3, cliente: "MARCIO", hora: "17:51", itens: [] }
-      ];
-
+      // Carrega do LocalStorage ou inicia com lista vazia
+      let comandas = JSON.parse(localStorage.getItem('comandas_rt')) || [];
       let comandaAtualId = null;
 
-      // Navegação entre páginas
+      // Salva os dados permanentemente no navegador
+      function salvarDados() {
+        localStorage.setItem('comandas_rt', JSON.stringify(comandas));
+      }
+
       function navegarPara(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
       }
 
-      // Renderiza os cards de comandas da home
       function renderizarComandas(lista = comandas) {
         const grid = document.getElementById('comandasGrid');
         grid.innerHTML = '';
+
+        if (lista.length === 0) {
+          grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a8a8b3; padding: 40px 0;">Nenhuma comanda aberta. Clique no botão abaixo para adicionar.</div>';
+          return;
+        }
 
         lista.forEach(c => {
           const total = c.itens.reduce((acc, curr) => acc + (curr.valorUnit * curr.qtd), 0);
@@ -441,7 +428,6 @@
         });
       }
 
-      // Abre a tela detalhada do cliente
       function abrirPaginaComanda(idComanda) {
         comandaAtualId = idComanda;
         const c = comandas.find(item => item.id === idComanda);
@@ -452,7 +438,6 @@
         navegarPara('pageComanda');
       }
 
-      // Renderiza a lista de produtos com + e -
       function renderizarProdutosDaComanda(comanda) {
         const container = document.getElementById('produtosComandaLista');
         container.innerHTML = '';
@@ -493,7 +478,6 @@
         document.getElementById('detalheTotalGeral').innerText = `R$ ${totalGeral.toFixed(2)}`;
       }
 
-      // Altera quantidade (+ / -)
       window.alterarQtd = function(indexItem, delta) {
         const comanda = comandas.find(c => c.id === comandaAtualId);
         if (comanda && comanda.itens[indexItem]) {
@@ -501,22 +485,22 @@
           if (comanda.itens[indexItem].qtd <= 0) {
             comanda.itens.splice(indexItem, 1);
           }
+          salvarDados();
           renderizarProdutosDaComanda(comanda);
           renderizarComandas();
         }
       };
 
-      // Remover item individual
       window.removerItem = function(indexItem) {
         const comanda = comandas.find(c => c.id === comandaAtualId);
         if (comanda) {
           comanda.itens.splice(indexItem, 1);
+          salvarDados();
           renderizarProdutosDaComanda(comanda);
           renderizarComandas();
         }
       };
 
-      // Inserir novo produto
       function adicionarProduto() {
         const nome = document.getElementById('itemNome').value.trim();
         const valor = parseFloat(document.getElementById('itemValor').value);
@@ -529,17 +513,16 @@
         const comanda = comandas.find(c => c.id === comandaAtualId);
         if (comanda) {
           comanda.itens.push({ desc: nome, valorUnit: valor, qtd: qtd });
+          salvarDados();
           renderizarProdutosDaComanda(comanda);
           renderizarComandas();
           fecharModal('modalAddProduto');
         }
       }
 
-      // Modais Helpers
       function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
       function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
 
-      // Eventos de Select
       document.getElementById('selectProduto').addEventListener('change', function() {
         const option = this.options[this.selectedIndex];
         if (option.value) {
@@ -548,7 +531,6 @@
         }
       });
 
-      // Eventos dos Botões
       document.getElementById('btnVoltarHome').onclick = () => navegarPara('pageHome');
       
       document.getElementById('btnAbrirNovaComanda').onclick = () => {
@@ -573,6 +555,7 @@
         };
 
         comandas.unshift(novaComanda);
+        salvarDados();
         renderizarComandas();
         fecharModal('modalNovaComanda');
         abrirPaginaComanda(novaComanda.id);
@@ -592,6 +575,7 @@
       document.getElementById('btnFecharComanda').onclick = () => {
         if (confirm('Deseja fechar esta comanda e finalizar o atendimento?')) {
           comandas = comandas.filter(c => c.id !== comandaAtualId);
+          salvarDados();
           renderizarComandas();
           navegarPara('pageHome');
         }
@@ -603,7 +587,7 @@
         renderizarComandas(filtradas);
       });
 
-      // Inicializar
+      // Inicialização
       renderizarComandas();
     });
   </script>
